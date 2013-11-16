@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     SQLTool st;
     st.connectDatabase();
 
-    qDebug() << st.db->tables();
+    st.test();
 
     return a.exec();
 }

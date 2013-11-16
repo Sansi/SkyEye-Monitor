@@ -8,7 +8,8 @@ class SQLTool
 public:
     SQLTool();
     void connectDatabase();
-    QSqlDatabase *db;
+    void test();
+//    QSqlDatabase *db;
 private:
 };
 
