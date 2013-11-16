@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -13,8 +13,10 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        sqlexample.cpp
+        sqlexample.cpp \
+    sqltool.cpp
 
-HEADERS  += sqlexample.h
+HEADERS  += sqlexample.h \
+    sqltool.h
 
 FORMS    += sqlexample.ui
