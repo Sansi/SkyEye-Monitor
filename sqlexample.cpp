@@ -1,7 +1,8 @@
 #include "sqlexample.h"
 #include "ui_sqlexample.h"
-#include <QSqlDatabase>
+#include <QtSql>
 #include <QDebug>
+#include <QtWidgets>
 
 SQLExample::SQLExample(QWidget *parent) :
     QWidget(parent),
@@ -71,3 +72,27 @@ void SQLExample::refresh()
     ui->dbTree->doItemsLayout();
 }
 
+void SQLExample::showTable(const QString &t)
+{
+    qDebug() << "showTable: " << t;
+    QSqlTableModel *model = new QSqlTableModel(ui->dbTable, *db);
+    model->setEditStrategy(QSqlTableModel::OnRowChange);
+    model->setTable(db->driver()->escapeIdentifier(t, QSqlDriver::TableName));
+    model->select();
+//    if (model->lastError().type() != QSqlError.NoError)
+//        emit statusMessage(model->lastError().text());
+    ui->dbTable->setModel(model);
+    ui->dbTable->setEditTriggers(QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed);
+
+    connect(ui->dbTable->selectionModel(),SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),this,SLOT(currentChanged()));
+}
+
+void SQLExample::on_dbTree_itemActivated(QTreeWidgetItem *item, int column)
+{
+    qDebug() << "itemActivated: " << item->text(0);
+    if (!item)
+        return;
+    if (item->parent()) {
+        showTable(item->text(0));
+    }
+}

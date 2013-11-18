@@ -4,6 +4,11 @@
 #include <QWidget>
 #include <QSqlDatabase>
 
+QT_FORWARD_DECLARE_CLASS(QTreeWidget)
+QT_FORWARD_DECLARE_CLASS(QTreeWidgetItem)
+QT_FORWARD_DECLARE_CLASS(QSqlDatabase)
+QT_FORWARD_DECLARE_CLASS(QMenu)
+
 namespace Ui {
 class SQLExample;
 }
@@ -18,10 +23,18 @@ public:
 
 public slots:
     void connectDatabase();
+    void currentChanged() {}
     void refresh();
+    void showTable(const QString &t);
 
 protected:
     void changeEvent(QEvent *e);
+
+signals:
+    void statusMessage(const QString &message);
+
+private slots:
+    void on_dbTree_itemActivated(QTreeWidgetItem *item, int column);
 
 private:
     Ui::SQLExample *ui;
