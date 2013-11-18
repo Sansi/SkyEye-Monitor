@@ -96,3 +96,28 @@ void SQLExample::on_dbTree_itemActivated(QTreeWidgetItem *item, int column)
         showTable(item->text(0));
     }
 }
+
+
+void SQLExample::exec()
+{
+    QSqlQueryModel *model = new QSqlQueryModel(ui->dbTable);
+    model->setQuery(QSqlQuery(ui->queryText->toPlainText(), *db));
+    ui->dbTable->setModel(model);
+
+    if (model->lastError().type() != QSqlError::NoError)
+        emit statusMessage(model->lastError().text());
+    else if (model->query().isSelect())
+        emit statusMessage(tr("Query OK."));
+    else
+        emit statusMessage(tr("Query OK, number of rows affected: %1").arg(model->query().numRowsAffected()));
+}
+
+void SQLExample::on_clearButton_clicked()
+{
+    ui->queryText->clear();
+}
+
+void SQLExample::on_execButton_clicked()
+{
+    exec();
+}

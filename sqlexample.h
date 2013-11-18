@@ -26,6 +26,7 @@ public slots:
     void currentChanged() {}
     void refresh();
     void showTable(const QString &t);
+    void exec();
 
 protected:
     void changeEvent(QEvent *e);
@@ -35,6 +36,10 @@ signals:
 
 private slots:
     void on_dbTree_itemActivated(QTreeWidgetItem *item, int column);
+
+    void on_clearButton_clicked();
+
+    void on_execButton_clicked();
 
 private:
     Ui::SQLExample *ui;
