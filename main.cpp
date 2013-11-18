@@ -1,5 +1,4 @@
 #include "sqlexample.h"
-#include "sqltool.h"
 #include <QApplication>
 #include <QDebug>
 
@@ -9,10 +8,8 @@ int main(int argc, char *argv[])
     SQLExample w;
     w.show();
 
-    SQLTool st;
-    st.connectDatabase();
-
-    st.test();
+    if (QSqlDatabase::connectionNames().isEmpty())
+        QMetaObject::invokeMethod(&w, "connectDatabase", Qt::QueuedConnection);
 
     return a.exec();
 }

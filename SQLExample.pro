@@ -13,10 +13,8 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        sqlexample.cpp \
-    sqltool.cpp
+        sqlexample.cpp
 
-HEADERS  += sqlexample.h \
-    sqltool.h
+HEADERS  += sqlexample.h
 
 FORMS    += sqlexample.ui
