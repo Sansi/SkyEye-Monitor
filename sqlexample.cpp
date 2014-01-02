@@ -146,6 +146,7 @@ void SQLExample::showStatus() {
     statusModel->setHeaderData(2, Qt::Horizontal, QObject::tr("Value"));
     statusModel->setHeaderData(3, Qt::Horizontal, QObject::tr("Error"));
     ui->deviceStatus->setModel(statusModel);
+    ui->deviceStatus->resizeColumnsToContents();
 }
 
 void SQLExample::showEvent() {
@@ -160,6 +161,7 @@ void SQLExample::showEvent() {
     eventModel->setHeaderData(2, Qt::Horizontal, QObject::tr("Attribute"));
     eventModel->setHeaderData(3, Qt::Horizontal, QObject::tr("Value"));
     ui->deviceEvent->setModel(eventModel);
+    ui->deviceEvent->resizeColumnsToContents();
 }
 
 void SQLExample::on_deviceList_itemSelectionChanged() {

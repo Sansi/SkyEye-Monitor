@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>781</width>
-    <height>561</height>
+    <width>780</width>
+    <height>580</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -96,22 +96,34 @@
           <layout class="QHBoxLayout" name="horizontalLayout_3">
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_3">
+             <property name="spacing">
+              <number>6</number>
+             </property>
              <item>
               <widget class="QTextBrowser" name="deviceInfo">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
                  <horstretch>0</horstretch>
-                 <verstretch>3</verstretch>
+                 <verstretch>7</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
                </property>
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
-                 <height>16777215</height>
+                 <height>340</height>
                 </size>
                </property>
                <property name="autoFillBackground">
                 <bool>false</bool>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::WinPanel</enum>
                </property>
                <property name="frameShadow">
                 <enum>QFrame::Sunken</enum>
@@ -142,14 +154,14 @@
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                  <horstretch>0</horstretch>
-                 <verstretch>1</verstretch>
+                 <verstretch>2</verstretch>
                 </sizepolicy>
                </property>
                <property name="autoFillBackground">
                 <bool>false</bool>
                </property>
                <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
+                <enum>QFrame::WinPanel</enum>
                </property>
                <property name="frameShadow">
                 <enum>QFrame::Sunken</enum>
