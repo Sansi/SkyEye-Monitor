@@ -107,7 +107,11 @@ void SQLExample::refresh() {
 void SQLExample::showInfo() {
     ui->deviceInfo->clear();
     QSqlQuery query(*db);
-    query.exec(infoQuery + ui->deviceList->currentItem()->text());
+    QString query_stmt;
+    QTextStream(&query_stmt) << infoQuery << "'" <<
+                               ui->deviceList->currentItem()->text() <<
+                               "'";
+    query.exec(query_stmt);
 
     if (query.lastError().isValid()) {
         ui->statusLabel->setText(query.lastError().text());
@@ -123,7 +127,12 @@ void SQLExample::showInfo() {
         }
     }
 
-    query.exec(playlistQuery + ui->deviceList->currentItem()->text());
+    query_stmt.clear();
+    QTextStream(&query_stmt) << playlistQuery << "'" <<
+                               ui->deviceList->currentItem()->text() <<
+                               "'";
+
+    query.exec(query_stmt);
 
     if (query.lastError().isValid()) {
         ui->statusLabel->setText(query.lastError().text());
@@ -135,7 +144,11 @@ void SQLExample::showInfo() {
 }
 
 void SQLExample::showStatus() {
-    statusModel->setQuery(statusQuery + ui->deviceList->currentItem()->text());
+    QString query_stmt;
+    QTextStream(&query_stmt) << statusQuery << "'" <<
+                               ui->deviceList->currentItem()->text() <<
+                               "'";
+    statusModel->setQuery(query_stmt);
 
     if (statusModel->lastError().isValid()) {
         ui->statusLabel->setText(statusModel->lastError().text());
@@ -150,7 +163,11 @@ void SQLExample::showStatus() {
 }
 
 void SQLExample::showEvent() {
-    eventModel->setQuery(eventQuery + ui->deviceList->currentItem()->text());
+    QString query_stmt;
+    QTextStream(&query_stmt) << eventQuery << "'" <<
+                               ui->deviceList->currentItem()->text() <<
+                               "'";
+    eventModel->setQuery(query_stmt);
 
     if (eventModel->lastError().isValid()) {
         ui->statusLabel->setText(eventModel->lastError().text());
