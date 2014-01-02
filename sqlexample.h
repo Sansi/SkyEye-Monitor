@@ -23,7 +23,6 @@ class SQLExample : public QWidget {
 
   public slots:
     void connectDatabase();
-    void currentChanged() {}
     void refresh();
     void showInfo();
     void showStatus();
@@ -38,8 +37,9 @@ class SQLExample : public QWidget {
   private slots:
     void on_deviceList_itemSelectionChanged();
     void readConfig();
+    void on_refreshButton_clicked();
 
-  private:
+private:
     Ui::SQLExample* ui;
     QSqlDatabase* db;
     QString dbmstype;

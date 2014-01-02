@@ -186,3 +186,8 @@ void SQLExample::on_deviceList_itemSelectionChanged() {
     showStatus();
     showEvent();
 }
+
+void SQLExample::on_refreshButton_clicked()
+{
+    refresh();
+}
