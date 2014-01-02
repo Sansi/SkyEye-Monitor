@@ -1,0 +1,7 @@
+{
+    "dbmstype": "QMYSQL",
+    "hostname": "202.11.20.186",
+    "database": "skyeye_db",
+    "username": "skyeye_admin",
+    "password": "skyeye@sansi.com"
+}

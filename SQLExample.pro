@@ -18,3 +18,6 @@ SOURCES += main.cpp\
 HEADERS  += sqlexample.h
 
 FORMS    += sqlexample.ui
+
+OTHER_FILES += \
+    config.json

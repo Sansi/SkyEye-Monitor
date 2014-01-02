@@ -3,6 +3,7 @@
 #include <QtSql>
 #include <QDebug>
 #include <QtWidgets>
+#include <QJsonDocument>
 
 SQLExample::SQLExample(QWidget *parent) :
     QWidget(parent),
@@ -30,12 +31,42 @@ void SQLExample::changeEvent(QEvent *e)
 
 void SQLExample::connectDatabase()
 {
-    db = new QSqlDatabase(QSqlDatabase::addDatabase("QMYSQL"));
-    db->setHostName("202.11.20.186");
-    db->setDatabaseName("skyeye_db");
-    db->setUserName("skyeye_admin");
-    db->setPassword("skyeye@sansi.com");
+  QFile jsonFile("config.json");
 
+  if(!jsonFile.open(QIODevice::ReadOnly | QIODevice::Text))
+  {
+    qDebug() << "Unable to open config file!";
+    return;
+  }
+
+  QByteArray jsonData = jsonFile.readAll();
+  jsonFile.close();
+  QJsonParseError *err = new QJsonParseError();
+  QJsonDocument doc = QJsonDocument::fromJson(jsonData, err);
+
+  if (err->error != 0)
+    qDebug() << err->errorString();
+
+  if (doc.isNull())
+  {
+    qDebug() << "Invalid config file format!";
+    return;
+  }
+  else if (doc.isObject())
+  {
+    QJsonObject jObject = doc.object();
+    QVariantMap config = jObject.toVariantMap();
+    QString dbmstype = config["dbmstype"].toString();
+    QString hostname = config["hostname"].toString();
+    QString database = config["database"].toString();
+    QString username = config["username"].toString();
+    QString password = config["password"].toString();
+    db = new QSqlDatabase(QSqlDatabase::addDatabase(dbmstype));
+    db->setHostName(hostname);
+    db->setDatabaseName(database);
+    db->setUserName(username);
+    db->setPassword(password);
+  }
     if (!db->open())
         qDebug() << "Failed to connect to database";
     else {
