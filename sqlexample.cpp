@@ -10,6 +10,8 @@ SQLExample::SQLExample(QWidget *parent) :
     ui(new Ui::SQLExample)
 {
     ui->setupUi(this);
+    statusModel = new QSqlQueryModel;
+    eventModel = new QSqlQueryModel;
 }
 
 SQLExample::~SQLExample()
@@ -35,7 +37,7 @@ void SQLExample::connectDatabase()
 
   if(!jsonFile.open(QIODevice::ReadOnly | QIODevice::Text))
   {
-    qDebug() << "Unable to open config file!";
+    ui->statusLabel->setText("Unable to open config file!");
     return;
   }
 
@@ -49,7 +51,7 @@ void SQLExample::connectDatabase()
 
   if (doc.isNull())
   {
-    qDebug() << "Invalid config file format!";
+    ui->statusLabel->setText("Invalid config file format!");
     return;
   }
   else if (doc.isObject())
@@ -68,87 +70,73 @@ void SQLExample::connectDatabase()
     db->setPassword(password);
   }
     if (!db->open())
-        qDebug() << "Failed to connect to database";
+        ui->statusLabel->setText("Failed to connect to database");
     else {
-        qDebug() << "Database connection OK";
-        qDebug() << db->databaseName();
-        qDebug() << db->tables();
+        ui->statusLabel->setText("Database connection OK");
     }
 
     refresh();
 }
 
-static QString qDBCaption(const QSqlDatabase &db)
-{
-    QString dbCaption = db.driverName();
-    dbCaption.append(QLatin1Char(':'));
-    if (!db.userName().isEmpty())
-        dbCaption.append(db.userName().append(QLatin1Char('@')));
-    dbCaption.append(db.databaseName());
-    return dbCaption;
-}
-
 void SQLExample::refresh()
 {
-    ui->dbTree->clear();
-    QTreeWidgetItem *root = new QTreeWidgetItem(ui->dbTree);
-    root->setText(0,qDBCaption(*db));
-    if (db->isOpen()) {
-        QStringList tables = db->tables();
-        for (int t = 0; t < tables.count(); ++t) {
-            QTreeWidgetItem *table = new QTreeWidgetItem(root);
-            table->setText(0, tables.at(t));
-        }
+    ui->deviceList->clear();
+    QSqlQuery query(*db);
+    // If you iterate through the result set only using next() and seek() with positive values, the following call before exec() will speed up the query significantly when operating on large result sets.
+    query.setForwardOnly(true);
+    query.exec("SELECT id, last_connected  FROM device ORDER BY last_connected DESC");
+    while (query.next()) {
+      QString id = query.value(0).toString();
+      QListWidgetItem *item = new QListWidgetItem(ui->deviceList);
+      item->setText(id);
     }
-    ui->dbTree->doItemsLayout();
+    ui->deviceList->doItemsLayout();
 }
 
-void SQLExample::showTable(const QString &t)
-{
-    qDebug() << "showTable: " << t;
-    QSqlTableModel *model = new QSqlTableModel(ui->dbTable, *db);
-    model->setEditStrategy(QSqlTableModel::OnRowChange);
-    model->setTable(db->driver()->escapeIdentifier(t, QSqlDriver::TableName));
-    model->select();
-//    if (model->lastError().type() != QSqlError.NoError)
-//        emit statusMessage(model->lastError().text());
-    ui->dbTable->setModel(model);
-    ui->dbTable->setEditTriggers(QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed);
-
-    connect(ui->dbTable->selectionModel(),SIGNAL(currentRowChanged(QModelIndex,QModelIndex)),this,SLOT(currentChanged()));
+void SQLExample::showInfo() {
+  ui->deviceInfo->clear();
+  QSqlQuery query(*db);
+  query.exec("SELECT cell, name, latitude, longitude, width, height, device_state_id, last_connected, last_status, last_event, last_playlist FROM device WHERE id="+ui->deviceList->currentItem()->text());
+  if (query.first()) {
+    ui->deviceInfo->insertPlainText("Cellnumber:\t"+query.value(0).toString()+"\n");
+    ui->deviceInfo->insertPlainText("Device name:\t"+query.value(1).toString()+"\n");
+    ui->deviceInfo->insertPlainText("Device latitude:\t"+query.value(2).toString()+"\n");
+    ui->deviceInfo->insertPlainText("Device longitude:\t"+query.value(3).toString()+"\n");
+    ui->deviceInfo->insertPlainText("Width (in mm):\t"+query.value(4).toString()+"\n");
+    ui->deviceInfo->insertPlainText("Height (in mm):\t"+query.value(5).toString()+"\n");
+    ui->deviceInfo->insertPlainText("Device state:\t"+query.value(6).toString()+"\n");
+    ui->deviceInfo->insertPlainText("Last connected at:\t"+query.value(7).toString()+"\n");
+    ui->deviceInfo->insertPlainText("Last status at:\t"+query.value(8).toString()+"\n");
+    ui->deviceInfo->insertPlainText("Last event at:\t"+query.value(9).toString()+"\n");
+    ui->deviceInfo->insertPlainText("Last playlist at:\t"+query.value(10).toString()+"\n");
+  }
 }
 
-void SQLExample::on_dbTree_itemActivated(QTreeWidgetItem *item, int column)
-{
-    qDebug() << "itemActivated: " << item->text(0);
-    if (!item)
-        return;
-    if (item->parent()) {
-        showTable(item->text(0));
-    }
+void SQLExample::showStatus() {
+  statusModel->setQuery("SELECT type, attr, value, error FROM status WHERE device_id="+ui->deviceList->currentItem()->text());
+  if (statusModel->lastError().isValid())
+    ui->statusLabel->setText(statusModel->lastError().text());
+  statusModel->setHeaderData(0, Qt::Horizontal, QObject::tr("Type"));
+  statusModel->setHeaderData(1, Qt::Horizontal, QObject::tr("Attribute"));
+  statusModel->setHeaderData(2, Qt::Horizontal, QObject::tr("Value"));
+  statusModel->setHeaderData(3, Qt::Horizontal, QObject::tr("Error"));
+  ui->deviceStatus->setModel(statusModel);
 }
 
-
-void SQLExample::exec()
-{
-    QSqlQueryModel *model = new QSqlQueryModel(ui->dbTable);
-    model->setQuery(QSqlQuery(ui->queryText->toPlainText(), *db));
-    ui->dbTable->setModel(model);
-
-    if (model->lastError().type() != QSqlError::NoError)
-        emit statusMessage(model->lastError().text());
-    else if (model->query().isSelect())
-        emit statusMessage(tr("Query OK."));
-    else
-        emit statusMessage(tr("Query OK, number of rows affected: %1").arg(model->query().numRowsAffected()));
+void SQLExample::showEvent() {
+  eventModel->setQuery("SELECT time, type, attr, value FROM event WHERE device_id="+ui->deviceList->currentItem()->text());
+  if (eventModel->lastError().isValid())
+    ui->statusLabel->setText(eventModel->lastError().text());
+  eventModel->setHeaderData(0, Qt::Horizontal, QObject::tr("Timestamp"));
+  eventModel->setHeaderData(1, Qt::Horizontal, QObject::tr("Type"));
+  eventModel->setHeaderData(2, Qt::Horizontal, QObject::tr("Attribute"));
+  eventModel->setHeaderData(3, Qt::Horizontal, QObject::tr("Value"));
+  ui->deviceEvent->setModel(eventModel);
 }
 
-void SQLExample::on_clearButton_clicked()
+void SQLExample::on_deviceList_itemSelectionChanged()
 {
-    ui->queryText->clear();
-}
-
-void SQLExample::on_execButton_clicked()
-{
-    exec();
+  showInfo();
+  showStatus();
+  showEvent();
 }

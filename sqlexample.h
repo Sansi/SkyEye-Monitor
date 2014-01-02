@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QSqlDatabase>
+#include <QtSql>
 
 QT_FORWARD_DECLARE_CLASS(QTreeWidget)
 QT_FORWARD_DECLARE_CLASS(QTreeWidgetItem)
@@ -25,8 +26,9 @@ public slots:
     void connectDatabase();
     void currentChanged() {}
     void refresh();
-    void showTable(const QString &t);
-    void exec();
+    void showInfo();
+    void showStatus();
+    void showEvent();
 
 protected:
     void changeEvent(QEvent *e);
@@ -35,15 +37,14 @@ signals:
     void statusMessage(const QString &message);
 
 private slots:
-    void on_dbTree_itemActivated(QTreeWidgetItem *item, int column);
 
-    void on_clearButton_clicked();
-
-    void on_execButton_clicked();
+    void on_deviceList_itemSelectionChanged();
 
 private:
     Ui::SQLExample *ui;
     QSqlDatabase *db;
+    QSqlQueryModel *statusModel;
+    QSqlQueryModel *eventModel;
 };
 
 #endif // SQLEXAMPLE_H
