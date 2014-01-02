@@ -23,3 +23,6 @@ FORMS    += sqlexample.ui
 
 OTHER_FILES += \
     config.json
+
+RESOURCES += \
+    res.qrc
