@@ -14,15 +14,14 @@ namespace Ui {
 class SQLExample;
 }
 
-class SQLExample : public QWidget
-{
+class SQLExample : public QWidget {
     Q_OBJECT
 
-public:
-    explicit SQLExample(QWidget *parent = 0);
+  public:
+    explicit SQLExample(QWidget* parent = 0);
     ~SQLExample();
 
-public slots:
+  public slots:
     void connectDatabase();
     void currentChanged() {}
     void refresh();
@@ -30,21 +29,32 @@ public slots:
     void showStatus();
     void showEvent();
 
-protected:
-    void changeEvent(QEvent *e);
+  protected:
+    void changeEvent(QEvent* e);
 
-signals:
-    void statusMessage(const QString &message);
+  signals:
+    void statusMessage(const QString& message);
 
-private slots:
-
+  private slots:
     void on_deviceList_itemSelectionChanged();
+    void readConfig();
 
-private:
-    Ui::SQLExample *ui;
-    QSqlDatabase *db;
-    QSqlQueryModel *statusModel;
-    QSqlQueryModel *eventModel;
+  private:
+    Ui::SQLExample* ui;
+    QSqlDatabase* db;
+    QString dbmstype;
+    QString hostname;
+    QString database;
+    QString username;
+    QString password;
+    QSqlQueryModel* statusModel;
+    QSqlQueryModel* eventModel;
+    QString listQuery;
+    QString infoQuery;
+    QStringList headers;
+    QString playlistQuery;
+    QString statusQuery;
+    QString eventQuery;
 };
 
 #endif // SQLEXAMPLE_H
