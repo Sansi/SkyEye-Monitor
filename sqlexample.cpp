@@ -97,8 +97,9 @@ void SQLExample::refresh() {
 
     while (query.next()) {
         QString id = query.value(0).toString();
+        QString state = query.value(1).toString();
         QListWidgetItem* item = new QListWidgetItem(ui->deviceList);
-        item->setText(id);
+        item->setText(id + ", " + state);
     }
 
     ui->deviceList->doItemsLayout();
