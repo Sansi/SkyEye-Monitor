@@ -26,3 +26,9 @@ OTHER_FILES += \
 
 RESOURCES += \
     res.qrc
+
+EXTRA_FILES += \
+        config.json
+for(FILE,EXTRA_FILES){
+    QMAKE_POST_LINK += $$quote(cp $${PWD}/$${FILE} $${OUT_PWD}$$escape_expand(\n\t))
+}
