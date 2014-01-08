@@ -1,9 +1,9 @@
 {
     "dbmstype": "QMYSQL",
-    "hostname": "202.11.12.186",
-    "database": "skyeye_db",
-    "username": "skyeye_admin",
-    "password": "skyeye@sansi.com",
+    "hostname": "202.11.11.162",
+    "database": "skyeye_db_test",
+    "username": "root",
+    "password": "root",
     "list_query": "SELECT device.id, device_state.description, device.last_connected  FROM device, device_state WHERE device.device_state_id=device_state.id ORDER BY device.last_connected DESC",
     "info_query": "SELECT device.cell, device.name, device.contract_no, device_type.name, device.latitude, device.longitude, device.width, device.height, device_state.description, device.keepalive, device.last_connected, device.last_status, device.last_event, device.last_playlist FROM device, device_state, device_type WHERE device.device_state_id=device_state.id AND device.device_type_id=device_type.id AND device.id=",
     "info_headers": [
