@@ -110,7 +110,7 @@ void SQLExample::showInfo() {
     QSqlQuery query(*db);
     QString query_stmt;
     QTextStream(&query_stmt) << infoQuery << "'" <<
-                               ui->deviceList->currentItem()->text() <<
+                               ui->deviceList->currentItem()->text().split(',').at(0) <<
                                "'";
     query.exec(query_stmt);
 
